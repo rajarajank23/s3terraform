@@ -16,8 +16,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AKIAXNGUVFWWTPVVOYOX }}
-        aws-secret-access-key: ${{ secrets.gckMVwnsHyb8UZ2u72gQbCbpLaZ5EacioRnBsPfY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
     - name: Assume IAM role
