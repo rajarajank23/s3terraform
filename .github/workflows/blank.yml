@@ -1,0 +1,39 @@
+name: Terraform
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AKIAXNGUVFWWTPVVOYOX }}
+        aws-secret-access-key: ${{ secrets.gckMVwnsHyb8UZ2u72gQbCbpLaZ5EacioRnBsPfY }}
+        aws-region: us-east-1
+
+    - name: Assume IAM role
+      id: assume-role
+      run: |
+        ROLE_ARN="arn:aws:iam::509399608749:role/terraform_role"
+        CREDS=$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name github-actions --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)
+        echo "AWS_ACCESS_KEY_ID=$(echo $CREDS | awk '{print $1}')" >> $GITHUB_ENV
+        echo "AWS_SECRET_ACCESS_KEY=$(echo $CREDS | awk '{print $2}')" >> $GITHUB_ENV
+        echo "AWS_SESSION_TOKEN=$(echo $CREDS | awk '{print $3}')" >> $GITHUB_ENV
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
